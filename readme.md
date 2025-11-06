@@ -33,7 +33,9 @@ LocalStorage – Armazena as tarefas localmente
 
 Baixe ou clone este repositório:
 
-git clone 
+git clone https://github.com/rebecasenai/estodolist.git
+
+link página funcionando: https://estodolist-seven.vercel.app/
 
 
 Abra o arquivo index.html diretamente no navegador.
@@ -57,6 +59,5 @@ Código totalmente comentado em português
 Estrutura organizada em seções numeradas para facilitar leitura e manutenção
 
 👨‍💻 Autor
-
-REBECA DINIZ
+Rebeca Diniz
 Estudante de programação — Projeto desenvolvido com base em exemplos do Prof. Rafael Ribas e aprimorado para prática de front-end limpo e modular.

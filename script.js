@@ -51,7 +51,7 @@ function adicionarTarefa() {
     concluida: false
   }
 
-  tarefas.push(novaTarefa)
+  tarefas.unshift(novaTarefa)
   salvarTarefas()
   exibirTarefas(tarefas)
   campoNovaTarefa.value = ''
@@ -68,28 +68,48 @@ function exibirTarefas(listaParaMostrar) {
     item.className =
       'flex justify-between items-center p-3 border border-gray-300 rounded-xl bg-gray-50 hover:bg-gray-100 transition'
 
-    if (tarefa.concluida) {
-      item.classList.add('line-through', 'text-gray-400')
-    }
+    // Div esquerda (checkbox + texto)
+    const divEsquerda = document.createElement('div')
+    divEsquerda.className = 'flex items-center gap-3 flex-grow'
 
-    const textoTarefa = document.createElement('span')
-    textoTarefa.textContent = tarefa.texto
-    textoTarefa.className = 'flex-grow cursor-pointer select-none'
-    textoTarefa.onclick = function () {
+    // Checkbox
+    const checkbox = document.createElement('input')
+    checkbox.type = 'checkbox'
+    checkbox.checked = tarefa.concluida
+    checkbox.className = 'w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+    checkbox.onclick = function() {
       alternarConclusao(tarefa.id)
     }
 
+    // Texto da tarefa
+    const textoTarefa = document.createElement('span')
+    textoTarefa.textContent = tarefa.texto
+    textoTarefa.className = 'select-none'
+    if (tarefa.concluida) {
+      textoTarefa.classList.add('line-through', 'text-gray-400')
+    }
+
+    // Montar div esquerda
+    divEsquerda.appendChild(checkbox)
+    divEsquerda.appendChild(textoTarefa)
+
+    // Div direita (botões)
     const botoes = document.createElement('div')
     botoes.className = 'flex gap-2'
 
-    const botaoEditar = document.createElement('button')
-    botaoEditar.textContent = '✏️'
-    botaoEditar.className =
-      'px-2 py-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded'
-    botaoEditar.onclick = function () {
-      editarTarefa(tarefa.id)
+    // Botão editar (só aparece se não estiver concluída)
+    if (!tarefa.concluida) {
+      const botaoEditar = document.createElement('button')
+      botaoEditar.textContent = '✏️'
+      botaoEditar.className =
+        'px-2 py-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded'
+      botaoEditar.onclick = function () {
+        editarTarefa(tarefa.id)
+      }
+      botoes.appendChild(botaoEditar)
     }
 
+    // Botão excluir
     const botaoExcluir = document.createElement('button')
     botaoExcluir.textContent = '🗑️'
     botaoExcluir.className =
@@ -97,10 +117,10 @@ function exibirTarefas(listaParaMostrar) {
     botaoExcluir.onclick = function () {
       excluirTarefa(tarefa.id)
     }
-
-    botoes.appendChild(botaoEditar)
     botoes.appendChild(botaoExcluir)
-    item.appendChild(textoTarefa)
+
+    // Montar o item completo
+    item.appendChild(divEsquerda)
     item.appendChild(botoes)
     listaTarefas.appendChild(item)
   }
@@ -113,6 +133,7 @@ function alternarConclusao(id) {
   for (let tarefa of tarefas) {
     if (tarefa.id === id) {
       tarefa.concluida = !tarefa.concluida
+      break
     }
   }
   salvarTarefas()
@@ -123,14 +144,16 @@ function alternarConclusao(id) {
 // 7. Editar tarefa
 // -------------------------------
 function editarTarefa(id) {
-  const novaDescricao = prompt('Edite a tarefa:')
+  const tarefa = tarefas.find(t => t.id === id)
+  if (tarefa.concluida) {
+    alert('Não é possível editar uma tarefa concluída!')
+    return
+  }
+
+  const novaDescricao = prompt('Edite a tarefa:', tarefa.texto)
   if (novaDescricao === null || novaDescricao.trim() === '') return
 
-  for (let tarefa of tarefas) {
-    if (tarefa.id === id) {
-      tarefa.texto = novaDescricao.trim()
-    }
-  }
+  tarefa.texto = novaDescricao.trim()
   salvarTarefas()
   exibirTarefas(tarefas)
 }
